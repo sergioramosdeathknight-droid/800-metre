@@ -1,0 +1,2423 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>800 METRE — Branşın Kapsamlı Analizi</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+    --bg: #08080a;
+    --bg-alt: #0d0d10;
+    --surface: #17171c;
+    --surface-2: #1c1c22;
+    --fg: #f5f2eb;
+    --fg-2: #b8b2a7;
+    --fg-3: #7a746b;
+    --fg-4: #4a453f;
+    --accent: #d4af37;
+    --accent-2: #f0d264;
+    --accent-3: #a8871f;
+    --accent-soft: rgba(212, 175, 55, 0.12);
+    --accent-glow: rgba(212, 175, 55, 0.25);
+    --red: #e5484d;
+    --green: #3ecf8e;
+    --border: rgba(245, 242, 235, 0.07);
+    --border-2: rgba(245, 242, 235, 0.12);
+    --border-accent: rgba(212, 175, 55, 0.3);
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+    --s-2: 0.5rem;
+    --s-3: 0.75rem;
+    --s-4: 1rem;
+    --s-5: 1.25rem;
+    --s-6: 1.5rem;
+    --s-8: 2rem;
+    --s-10: 2.5rem;
+    --s-12: 3rem;
+    --s-16: 4rem;
+    --s-20: 5rem;
+    --s-24: 6rem;
+    --s-32: 8rem;
+    --ease-2: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-3: cubic-bezier(0.16, 1, 0.3, 1);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 24px 64px rgba(0, 0, 0, 0.6);
+    --r-md: 4px;
+    --r-full: 9999px;
+    --nav-height: 72px;
+}
+
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: var(--nav-height);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--fg);
+    background: var(--bg);
+    overflow-x: hidden;
+    position: relative;
+    min-height: 100vh;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    pointer-events: none;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.4;
+    background-image:
+        linear-gradient(rgba(212, 175, 55, 0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(212, 175, 55, 0.015) 1px, transparent 1px);
+    background-size: 60px 60px;
+}
+
+::selection { background: var(--accent); color: var(--bg); }
+
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--bg-alt); }
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--accent-3), var(--accent));
+    border-radius: var(--r-full);
+    border: 2px solid var(--bg-alt);
+}
+
+.progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-3), var(--accent), var(--accent-2));
+    z-index: 10001;
+    width: 0%;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--nav-height);
+    z-index: 1000;
+    padding: 0 var(--s-12);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(8, 8, 10, 0.72);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    border-bottom: 1px solid var(--border);
+    transition: transform 0.4s var(--ease-2);
+}
+
+.nav.hidden { transform: translateY(-100%); }
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.3s;
+}
+
+.nav-brand:hover { color: var(--accent); }
+
+.nav-brand .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent-glow);
+    animation: pulseDot 2s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(0.85); opacity: 0.7; }
+}
+
+.nav-links {
+    display: flex;
+    gap: var(--s-8);
+    list-style: none;
+    align-items: center;
+}
+
+.nav-links a {
+    position: relative;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+    text-decoration: none;
+    transition: color 0.3s;
+    padding: 0.5rem 0;
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--accent);
+    transition: width 0.4s var(--ease-2);
+}
+
+.nav-links a:hover,
+.nav-links a.active { color: var(--accent); }
+
+.nav-links a:hover::after,
+.nav-links a.active::after { width: 100%; }
+
+.hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: calc(var(--nav-height) + var(--s-16)) var(--s-12) var(--s-16);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-bg-number {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-display);
+    font-size: clamp(18rem, 42vw, 40rem);
+    font-weight: 900;
+    color: rgba(212, 175, 55, 0.035);
+    line-height: 0.85;
+    user-select: none;
+    pointer-events: none;
+    letter-spacing: -0.05em;
+    z-index: 0;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 1000px;
+}
+
+.hero-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-4);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: var(--s-6);
+    opacity: 0;
+    animation: fadeUp 1s var(--ease-3) 0.2s forwards;
+}
+
+.hero-kicker::before,
+.hero-kicker::after {
+    content: '';
+    width: 48px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent));
+}
+
+.hero-kicker::after {
+    background: linear-gradient(90deg, var(--accent), transparent);
+}
+
+.hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 10vw, 9rem);
+    font-weight: 900;
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+    margin-bottom: var(--s-6);
+    opacity: 0;
+    animation: fadeUp 1.2s var(--ease-3) 0.4s forwards;
+}
+
+.hero-title .line { display: block; }
+.hero-title .line-1 { color: var(--fg); }
+.hero-title .line-2 {
+    font-style: italic;
+    background: linear-gradient(135deg, var(--accent-2), var(--accent), var(--accent-3));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+    font-size: 1.05rem;
+    font-weight: 300;
+    color: var(--fg-2);
+    max-width: 680px;
+    margin: 0 auto var(--s-12);
+    line-height: 1.85;
+    opacity: 0;
+    animation: fadeUp 1.2s var(--ease-3) 0.6s forwards;
+}
+
+.hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: var(--s-16);
+    flex-wrap: wrap;
+    margin-bottom: var(--s-16);
+    opacity: 0;
+    animation: fadeUp 1.2s var(--ease-3) 0.8s forwards;
+}
+
+.hero-stat {
+    text-align: center;
+    position: relative;
+}
+
+.hero-stat + .hero-stat::before {
+    content: '';
+    position: absolute;
+    left: calc(-1 * var(--s-8));
+    top: 20%;
+    bottom: 20%;
+    width: 1px;
+    background: var(--border-2);
+}
+
+.hero-stat-value {
+    font-family: var(--font-mono);
+    font-size: 2.4rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: var(--s-2);
+    color: var(--accent);
+    letter-spacing: -0.02em;
+}
+
+.hero-stat-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+}
+
+.hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-3);
+    padding: 1rem 2.5rem;
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.4s var(--ease-2);
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeUp 1.2s var(--ease-3) 1s forwards;
+}
+
+.hero-cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.4s var(--ease-2);
+    z-index: -1;
+}
+
+.hero-cta:hover { color: var(--bg); }
+.hero-cta:hover::before { transform: scaleX(1); transform-origin: left; }
+
+.scroll-hint {
+    position: absolute;
+    bottom: var(--s-8);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--s-3);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--fg-4);
+    opacity: 0;
+    animation: fadeUp 1.2s var(--ease-3) 1.4s forwards, bobDown 2.4s ease-in-out infinite 2s;
+}
+
+.scroll-hint .line {
+    width: 1px;
+    height: 44px;
+    background: linear-gradient(180deg, var(--accent), transparent);
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(32px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bobDown {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(10px); }
+}
+
+.stats-strip {
+    background: var(--bg-alt);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: var(--s-10) var(--s-12);
+}
+
+.stats-strip-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--s-8);
+}
+
+.strip-item {
+    text-align: center;
+    padding: var(--s-4);
+    position: relative;
+}
+
+.strip-item + .strip-item::before {
+    content: '';
+    position: absolute;
+    left: calc(-1 * var(--s-4));
+    top: 30%;
+    bottom: 30%;
+    width: 1px;
+    background: var(--border-2);
+}
+
+.strip-value {
+    font-family: var(--font-mono);
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: var(--s-2);
+}
+
+.strip-label {
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+}
+
+.section {
+    padding: var(--s-32) var(--s-12);
+    max-width: 1320px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.section-alt {
+    background: var(--bg-alt);
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.section-alt > .section-inner {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 var(--s-12);
+}
+
+.section-header {
+    margin-bottom: var(--s-16);
+    max-width: 820px;
+}
+
+.section-number {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-3);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.28em;
+    color: var(--accent);
+    margin-bottom: var(--s-6);
+    text-transform: uppercase;
+}
+
+.section-number::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+}
+
+.section-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4.5vw, 3.6rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--s-5);
+    color: var(--fg);
+}
+
+.section-title em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 400;
+}
+
+.section-desc {
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--fg-2);
+    line-height: 1.85;
+    max-width: 720px;
+}
+
+.divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+    margin: var(--s-12) 0;
+}
+
+.divider-accent {
+    width: 56px;
+    height: 2px;
+    background: var(--accent);
+    margin: var(--s-8) 0;
+    box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: var(--s-8);
+    transition: all 0.5s var(--ease-2);
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 0;
+    background: var(--accent);
+    transition: height 0.6s var(--ease-2);
+}
+
+.card:hover {
+    background: var(--surface-2);
+    border-color: var(--border-2);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+.card:hover::before { height: 100%; }
+
+.card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    font-size: 1.4rem;
+    background: var(--accent-soft);
+    border: 1px solid var(--border-accent);
+    border-radius: var(--r-md);
+    margin-bottom: var(--s-5);
+    color: var(--accent);
+}
+
+.card-title {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: var(--s-3);
+    color: var(--fg);
+}
+
+.card-text {
+    font-size: 0.92rem;
+    color: var(--fg-2);
+    line-height: 1.8;
+}
+
+.card-text strong { color: var(--accent); font-weight: 600; }
+
+.grid { display: grid; gap: var(--s-6); }
+.grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+@media (max-width: 1024px) {
+    .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 640px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+}
+
+.stat-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: var(--s-8) var(--s-6);
+    text-align: center;
+    transition: all 0.4s var(--ease-2);
+}
+
+.stat-box:hover {
+    border-color: var(--border-accent);
+    transform: translateY(-4px);
+}
+
+.stat-box-value {
+    font-family: var(--font-mono);
+    font-size: 2.6rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--accent);
+    margin-bottom: var(--s-3);
+}
+
+.stat-box-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+}
+
+.stat-box-desc {
+    font-size: 0.82rem;
+    color: var(--fg-2);
+    line-height: 1.7;
+    margin-top: var(--s-4);
+}
+
+.table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    background: var(--surface);
+}
+
+table.record-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    min-width: 720px;
+}
+
+.record-table thead { background: var(--bg-alt); }
+
+.record-table thead th {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+    text-align: left;
+    padding: var(--s-4) var(--s-5);
+    border-bottom: 1px solid var(--border-2);
+    white-space: nowrap;
+}
+
+.record-table tbody td {
+    padding: var(--s-4) var(--s-5);
+    border-bottom: 1px solid var(--border);
+    color: var(--fg-2);
+    white-space: nowrap;
+}
+
+.record-table tbody tr:last-child td { border-bottom: none; }
+.record-table tbody tr { transition: background 0.25s; }
+.record-table tbody tr:hover { background: rgba(212, 175, 55, 0.04); }
+.record-table tbody tr:hover td { color: var(--fg); }
+
+.record-table .rank { font-family: var(--font-mono); color: var(--fg-3); font-weight: 500; }
+.record-table .time { font-family: var(--font-mono); font-weight: 700; color: var(--accent); font-size: 0.95rem; }
+.record-table .name { font-weight: 600; color: var(--fg); }
+.record-table .flag { font-size: 1.15rem; margin-right: var(--s-2); vertical-align: middle; }
+.record-table .highlight-row { background: rgba(212, 175, 55, 0.06); }
+.record-table .highlight-row td { border-bottom-color: var(--border-accent); }
+.record-table .highlight-row .time { color: var(--accent-2); }
+
+.race-splits {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    overflow: hidden;
+    background: var(--surface);
+    margin: var(--s-8) 0;
+}
+
+.split {
+    padding: var(--s-8) var(--s-5);
+    text-align: center;
+    transition: background 0.3s;
+}
+
+.split:hover { background: var(--surface-2); }
+.split + .split { border-left: 1px solid var(--border); }
+
+.split-label {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+    margin-bottom: var(--s-4);
+}
+
+.split-time {
+    font-family: var(--font-mono);
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: var(--s-3);
+}
+
+.split-note { font-size: 0.76rem; color: var(--fg-2); line-height: 1.6; }
+
+@media (max-width: 768px) {
+    .race-splits { grid-template-columns: repeat(2, 1fr); }
+    .split:nth-child(3) { border-left: none; border-top: 1px solid var(--border); }
+    .split:nth-child(4) { border-top: 1px solid var(--border); }
+}
+
+.timeline {
+    position: relative;
+    padding-left: var(--s-10);
+    margin-top: var(--s-12);
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    background: linear-gradient(180deg, var(--border-2), var(--accent), var(--border-2));
+}
+
+.timeline-item { position: relative; padding-bottom: var(--s-10); }
+.timeline-item:last-child { padding-bottom: 0; }
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: calc(-1 * var(--s-10));
+    top: 6px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--accent);
+    transform: translateX(-5px);
+    box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.12), 0 0 20px var(--accent-glow);
+}
+
+.timeline-date {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    margin-bottom: var(--s-2);
+}
+
+.timeline-title {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--fg);
+    margin-bottom: var(--s-2);
+    line-height: 1.3;
+}
+
+.timeline-text {
+    font-size: 0.88rem;
+    color: var(--fg-2);
+    line-height: 1.75;
+    max-width: 720px;
+}
+
+.quote-block {
+    padding: var(--s-16) 0;
+    text-align: center;
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.quote-block::before {
+    content: '"';
+    font-family: var(--font-display);
+    font-size: 8rem;
+    line-height: 1;
+    color: var(--accent);
+    opacity: 0.12;
+    position: absolute;
+    top: var(--s-8);
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
+.quote-text {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2.6vw, 1.9rem);
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.55;
+    color: var(--fg);
+    position: relative;
+    z-index: 1;
+    margin-bottom: var(--s-6);
+    padding: 0 var(--s-6);
+}
+
+.quote-author {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.quote-author::before { content: '— '; opacity: 0.5; }
+
+/* ============================================================
+   VİDEO ALANI — 3:20'DEN BAŞLIYOR (YOUTUBE API İLE ZORLAMA)
+   ============================================================ */
+.video-wrap {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    background: #000;
+    box-shadow: var(--shadow-xl);
+    transition: border-color 0.5s;
+}
+
+.video-wrap:hover { border-color: var(--border-accent); }
+
+#ytPlayer,
+.video-wrap iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.video-timestamp {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    margin-top: var(--s-5);
+    padding: 0.5rem 1rem;
+    background: var(--accent-soft);
+    border: 1px solid var(--border-accent);
+    border-radius: var(--r-full);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.video-timestamp::before {
+    content: '▶';
+    font-size: 0.7rem;
+}
+
+/* ============================================================
+   SEKMELER
+   ============================================================ */
+.tabs {
+    display: flex;
+    gap: var(--s-2);
+    margin-bottom: var(--s-8);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+}
+
+.tab {
+    padding: var(--s-4) var(--s-6);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--fg-3);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s var(--ease-2);
+    white-space: nowrap;
+    margin-bottom: -1px;
+}
+
+.tab:hover { color: var(--fg); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+.tab-panel { display: none; animation: fadeIn 0.5s var(--ease-2); }
+.tab-panel.active { display: block; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.athlete-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: var(--s-8);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.5s var(--ease-2);
+}
+
+.athlete-card:hover {
+    border-color: var(--border-accent);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.athlete-country { font-size: 1.8rem; margin-bottom: var(--s-3); line-height: 1; }
+
+.athlete-name {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--fg);
+    margin-bottom: var(--s-2);
+    line-height: 1.25;
+}
+
+.athlete-meta {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+    margin-bottom: var(--s-4);
+}
+
+.athlete-pb {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: var(--s-4);
+}
+
+.athlete-note { font-size: 0.85rem; color: var(--fg-2); line-height: 1.75; }
+
+.track-visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--s-16) var(--s-8);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    margin: var(--s-8) 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.track-ring {
+    width: 340px;
+    height: 340px;
+    border-radius: 50%;
+    border: 4px solid var(--accent);
+    position: relative;
+    box-shadow:
+        0 0 0 20px rgba(212, 175, 55, 0.04),
+        0 0 0 40px rgba(212, 175, 55, 0.02),
+        inset 0 0 40px rgba(212, 175, 55, 0.08);
+}
+
+.track-ring::before {
+    content: '800';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 4rem;
+    font-weight: 900;
+    color: var(--accent);
+}
+
+.track-ring .runner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    background: var(--accent-2);
+    border-radius: 50%;
+    box-shadow: 0 0 20px var(--accent-glow);
+    animation: orbit 4s linear infinite;
+}
+
+@keyframes orbit {
+    from { transform: rotate(0deg) translateX(170px) translateY(-8px); }
+    to { transform: rotate(360deg) translateX(170px) translateY(-8px); }
+}
+
+.quiz-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: var(--s-8);
+}
+
+.quiz-question {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--fg);
+    margin-bottom: var(--s-6);
+    line-height: 1.4;
+}
+
+.quiz-options { display: grid; gap: var(--s-3); }
+
+.quiz-option {
+    padding: var(--s-4) var(--s-5);
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--fg-2);
+    font-size: 0.92rem;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.3s var(--ease-2);
+    font-family: var(--font-body);
+}
+
+.quiz-option:hover {
+    border-color: var(--border-accent);
+    color: var(--fg);
+    background: var(--surface-2);
+}
+
+.quiz-option.correct {
+    border-color: var(--green);
+    background: rgba(62, 207, 142, 0.08);
+    color: var(--green);
+}
+
+.quiz-option.wrong {
+    border-color: var(--red);
+    background: rgba(229, 72, 77, 0.08);
+    color: var(--red);
+}
+
+.quiz-feedback {
+    margin-top: var(--s-5);
+    padding: var(--s-4) var(--s-5);
+    border-radius: 2px;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    display: none;
+}
+
+.quiz-feedback.show { display: block; }
+.quiz-feedback.ok {
+    background: rgba(62, 207, 142, 0.08);
+    border: 1px solid rgba(62, 207, 142, 0.25);
+    color: var(--green);
+}
+.quiz-feedback.no {
+    background: rgba(229, 72, 77, 0.08);
+    border: 1px solid rgba(229, 72, 77, 0.25);
+    color: var(--red);
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding: 0.35rem 0.75rem;
+    background: var(--accent-soft);
+    border: 1px solid var(--border-accent);
+    border-radius: var(--r-full);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.footer {
+    padding: var(--s-20) var(--s-12) var(--s-10);
+    border-top: 1px solid var(--border);
+    background: var(--bg-alt);
+}
+
+.footer-inner {
+    max-width: 1320px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: var(--s-12);
+    margin-bottom: var(--s-12);
+}
+
+.footer-brand {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--fg);
+    margin-bottom: var(--s-4);
+}
+
+.footer-brand em { font-style: italic; color: var(--accent); }
+
+.footer-text {
+    font-size: 0.85rem;
+    color: var(--fg-2);
+    line-height: 1.8;
+    max-width: 420px;
+}
+
+.footer-col-title {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: var(--s-5);
+}
+
+.footer-list { list-style: none; display: flex; flex-direction: column; gap: var(--s-3); }
+
+.footer-list a {
+    font-size: 0.85rem;
+    color: var(--fg-2);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-list a:hover { color: var(--accent); }
+
+.footer-bottom {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding-top: var(--s-8);
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--s-4);
+}
+
+.footer-copy {
+    font-size: 0.75rem;
+    color: var(--fg-4);
+    font-family: var(--font-mono);
+    letter-spacing: 0.08em;
+}
+
+[data-anim] {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.9s var(--ease-3), transform 0.9s var(--ease-3);
+}
+
+[data-anim].in-view { opacity: 1; transform: translateY(0); }
+
+[data-delay="1"] { transition-delay: 0.08s; }
+[data-delay="2"] { transition-delay: 0.16s; }
+[data-delay="3"] { transition-delay: 0.24s; }
+[data-delay="4"] { transition-delay: 0.32s; }
+[data-delay="5"] { transition-delay: 0.40s; }
+[data-delay="6"] { transition-delay: 0.48s; }
+[data-delay="7"] { transition-delay: 0.56s; }
+[data-delay="8"] { transition-delay: 0.64s; }
+
+@media (max-width: 1024px) {
+    .nav { padding: 0 var(--s-6); }
+    .nav-links { gap: var(--s-5); }
+    .section { padding: var(--s-24) var(--s-6); }
+    .hero { padding-left: var(--s-6); padding-right: var(--s-6); }
+    .stats-strip { padding: var(--s-8) var(--s-6); }
+}
+
+@media (max-width: 768px) {
+    .nav-links { display: none; }
+    .hero-stats { gap: var(--s-8); }
+    .hero-stat + .hero-stat::before { display: none; }
+    .footer { padding: var(--s-16) var(--s-6) var(--s-8); }
+    .footer-inner { grid-template-columns: 1fr; gap: var(--s-8); }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<nav class="nav" id="nav">
+    <div class="nav-brand" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <span class="dot"></span>
+        800 METRE
+    </div>
+    <ul class="nav-links">
+        <li><a href="#tarih" data-link>Tarih</a></li>
+        <li><a href="#kurallar" data-link>Kurallar</a></li>
+        <li><a href="#fizyoloji" data-link>Fizyoloji</a></li>
+        <li><a href="#taktik" data-link>Taktik</a></li>
+        <li><a href="#rekorlar" data-link>Rekorlar</a></li>
+        <li><a href="#efsaneler" data-link>Efsaneler</a></li>
+        <li><a href="#video" data-link>Video</a></li>
+    </ul>
+</nav>
+
+<header class="hero" id="hero">
+    <div class="hero-bg-number">800</div>
+    <div class="hero-content">
+        <div class="hero-kicker">Branş Analizi · Elit Seviye</div>
+        <h1 class="hero-title">
+            <span class="line line-1">İki Turun</span>
+            <span class="line line-2">Bilimi</span>
+        </h1>
+        <p class="hero-subtitle">
+            800 metre, atletizmin en zorlu orta mesafe yarışı. Sprint hızı ve 
+            dayanıklılığın kusursuz birleşimi. Bu sunumda branşın tarihini, 
+            kurallarını, fizyolojisini, taktiklerini, rekorlarını ve efsane 
+            atletlerini kapsamlı biçimde ele alıyoruz.
+        </p>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="hero-stat-value">1:40.91</div>
+                <div class="hero-stat-label">Dünya Rekoru</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-value" data-count="2">0</div>
+                <div class="hero-stat-label">Tur · Olimpik Mesafe</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-value" data-count="1896">0</div>
+                <div class="hero-stat-label">Olimpiyat Başlangıcı</div>
+            </div>
+        </div>
+        <a href="#tarih" class="hero-cta">
+            Keşfetmeye Başla
+            <span>→</span>
+        </a>
+    </div>
+    <div class="scroll-hint">
+        <span>Kaydır</span>
+        <div class="line"></div>
+    </div>
+</header>
+
+<section class="stats-strip">
+    <div class="stats-strip-inner">
+        <div class="strip-item" data-anim>
+            <div class="strip-value">1:40.91</div>
+            <div class="strip-label">Dünya Rekoru</div>
+        </div>
+        <div class="strip-item" data-anim data-delay="1">
+            <div class="strip-value">9</div>
+            <div class="strip-label">Olimpiyat Altını (Erkek)</div>
+        </div>
+        <div class="strip-item" data-anim data-delay="2">
+            <div class="strip-value">14 Yıl</div>
+            <div class="strip-label">Kırılmayan Rekor</div>
+        </div>
+        <div class="strip-item" data-anim data-delay="3">
+            <div class="strip-value">2:00</div>
+            <div class="strip-label">Sihirli Sınır</div>
+        </div>
+        <div class="strip-item" data-anim data-delay="4">
+            <div class="strip-value">1:47.23</div>
+            <div class="strip-label">Türkiye Rekoru</div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="tarih">
+    <div class="section-header">
+        <span class="section-number" data-anim>01 · Tarihçe</span>
+        <h2 class="section-title" data-anim data-delay="1">
+            Antik Yunan'dan <em>Modern Olimpiyat'a</em>
+        </h2>
+        <p class="section-desc" data-anim data-delay="2">
+            800 metre, antik Olimpiyat Oyunları'na kadar uzanan köklü bir 
+            geçmişe sahiptir. Modern atletizmdeki yeri ise 1896 Atina 
+            Olimpiyatları ile başlar ve günümüze kadar kesintisiz devam eder.
+        </p>
+    </div>
+
+    <div class="divider-accent" data-anim></div>
+
+    <div class="timeline">
+        <div class="timeline-item" data-anim>
+            <div class="timeline-date">M.Ö. 776</div>
+            <div class="timeline-title">Antik Olimpiyat Oyunları</div>
+            <div class="timeline-text">
+                Antik Yunan'da düzenlenen Olimpiyat Oyunları'nda "stadion" 
+                yarışı (yaklaşık 192 metre) en prestijli branştı. Uzun mesafe 
+                yarışları ise "diaulos" (iki stadion) ve "dolichos" (uzun 
+                mesafe) adıyla yapılıyordu.
+            </div>
+        </div>
+        <div class="timeline-item" data-anim data-delay="1">
+            <div class="timeline-date">1896</div>
+            <div class="timeline-title">Modern Olimpiyatlar'da İlk 800 Metre</div>
+            <div class="timeline-text">
+                Atina'da düzenlenen ilk modern Olimpiyat Oyunları'nda 800 metre 
+                yarışı takvime eklendi. Avustralyalı Edwin Flack, 2:11.0'lık 
+                derecesiyle ilk olimpiyat şampiyonu oldu.
+            </div>
+        </div>
+        <div class="timeline-item" data-anim data-delay="2">
+            <div class="timeline-date">1912</div>
+            <div class="timeline-title">IAAF Kuruluşu ve Standartlaşma</div>
+            <div class="timeline-text">
+                Uluslararası Atletizm Federasyonları Birliği (IAAF) kuruldu. 
+                800 metre resmi olarak standartlaştırıldı ve dünya rekoru 
+                kayıtları tutulmaya başlandı.
+            </div>
+        </div>
+        <div class="timeline-item" data-anim data-delay="3">
+            <div class="timeline-date">1928</div>
+            <div class="timeline-title">Kadınlar 800 Metre İlk Kez</div>
+            <div class="timeline-text">
+                Amsterdam Olimpiyatları'nda kadınlar 800 metre ilk kez 
+                takvime alındı. Ancak 32 yıl süreyle men edildi. 
+                1960 Roma Olimpiyatları'nda geri döndü.
+            </div>
+        </div>
+        <div class="timeline-item" data-anim data-delay="4">
+            <div class="timeline-date">1976</div>
+            <div class="timeline-title">Juantorena'nın Efsanevi Çifte Zaferi</div>
+            <div class="timeline-text">
+                Alberto Juantorena, Montreal Olimpiyatları'nda hem 400 hem de 
+                800 metreyi kazanarak tarihe geçti. "El Caballo" (At) 
+                lakabıyla anılan Kübalı atlet, bu başarıyı gösteren tek 
+                erkek sporcudur.
+            </div>
+        </div>
+        <div class="timeline-item" data-anim data-delay="5">
+            <div class="timeline-date">1983</div>
+            <div class="timeline-title">Kadınlar Dünya Rekoru</div>
+            <div class="timeline-text">
+                Jarmila Kratochvílová, Münih'te 1:53.28 koşarak kadınlar 
+                800 metre dünya rekorunu kırdı. Bu rekor, 40 yılı aşkın 
+                süredir kırılamıyor.
+            </div>
+        </div>
+        <div class="timeline-item" data-anim data-delay="6">
+            <div class="timeline-date">1997</div>
+            <div class="timeline-title">Wilson Kipketer Dönemi</div>
+            <div class="timeline-text">
+                Danimarka adına yarışan Wilson Kipketer, 1:41.11 koşarak 
+                dünya rekorunu kırdı. Bu rekor, 2012'ye kadar ayakta kaldı.
+            </div>
+        </div>
+        <div class="timeline-item" data-anim data-delay="7">
+            <div class="timeline-date">2012</div>
+            <div class="timeline-title">Rudisha'nın Ölümsüz Rekoru</div>
+            <div class="timeline-text">
+                David Rudisha, Londra Olimpiyatları finalinde 1:40.91 koşarak 
+                dünya rekorunu kırdı. Yarış baştan sona lider götüren Rudisha, 
+                tarihin en büyük 800 metre performansını sergiledi.
+            </div>
+        </div>
+        <div class="timeline-item" data-anim data-delay="8">
+            <div class="timeline-date">2024</div>
+            <div class="timeline-title">Yeni Nesil Yükselişi</div>
+            <div class="timeline-text">
+                Marco Arop (1:41.20), Emmanuel Wanyonyi (1:41.24) ve 
+                Djamel Sedjati (1:41.61) gibi yeni nesil atletler, 
+                Rudisha'nın rekoruna yaklaşarak 800 metrenin geleceğini 
+                şekillendirdi.
+            </div>
+        </div>
+    </div>
+
+    <div class="quote-block" data-anim>
+        <p class="quote-text">
+            800 metre, atletizmin en zorlu sınavıdır. Ne saf sprint ne de 
+            saf dayanıklılık. İkisinin de en iyisini aynı anda ister.
+        </p>
+        <div class="quote-author">Antik Atletizm Arşivi</div>
+    </div>
+</section>
+
+<section class="section" id="kurallar">
+    <div class="section-header">
+        <span class="section-number" data-anim>02 · Kurallar & Pist</span>
+        <h2 class="section-title" data-anim data-delay="1">
+            Branşın <em>Teknik Çerçevesi</em>
+        </h2>
+        <p class="section-desc" data-anim data-delay="2">
+            800 metre, atletizmde hem bireysel taktik hem de teknik disiplin 
+            gerektiren bir yarıştır. Kulvar kullanımı, çıkış pozisyonu ve 
+            bitiş çizgisi kuralları, branşın karakterini belirleyen ana 
+            unsurlardır.
+        </p>
+    </div>
+
+    <div class="divider-accent" data-anim></div>
+
+    <div class="grid grid-2">
+        <div class="card" data-anim>
+            <div class="card-icon">🏁</div>
+            <h3 class="card-title">Çıkış Düzeni</h3>
+            <p class="card-text">
+                800 metre koşucuları, <strong>ayakta çıkış</strong> pozisyonundan 
+                başlar. Blok kullanılmaz. Çıkış çizgisi, kulvar 1'den 
+                başlayarak kademeli olarak ileridedir (staggered start).
+            </p>
+        </div>
+        <div class="card" data-anim data-delay="1">
+            <div class="card-icon">🛤️</div>
+            <h3 class="card-title">Kulvar Kuralı</h3>
+            <p class="card-text">
+                Sporcular ilk <strong>100 metre boyunca kendi kulvarlarında</strong> 
+                koşmak zorundadır. İlk virajın sonunda (break line) iç kulvara 
+                geçiş serbesttir.
+            </p>
+        </div>
+        <div class="card" data-anim data-delay="2">
+            <div class="card-icon">📏</div>
+            <h3 class="card-title">Pist Ölçüleri</h3>
+            <p class="card-text">
+                Standart atletizm pisti <strong>400 metre</strong> uzunluğundadır. 
+                800 metre, iki tam tur demektir. Pist genişliği 1.22 metre, 
+                kulvar sayısı genellikle 8'dir.
+            </p>
+        </div>
+        <div class="card" data-anim data-delay="3">
+            <div class="card-icon">🚫</div>
+            <h3 class="card-title">İtme & Engel Kuralları</h3>
+            <p class="card-text">
+                Rakibini itmek, bloke etmek veya engellemek kesinlikle 
+                yasaktır. İç kulvara haksız geçiş, rakibin önünü kesme veya 
+                dirsek kullanımı diskalifiye sebebidir.
+            </p>
+        </div>
+        <div class="card" data-anim data-delay="4">
+            <div class="card-icon">⏱️</div>
+            <h3 class="card-title">Zamanlama</h3>
+            <p class="card-text">
+                Elektronik zamanlama zorunludur. Foto-finiş sistemi 
+                kullanılır. Dünya rekoru için <strong>1/100 saniye</strong> 
+                hassasiyeti gerekir.
+            </p>
+        </div>
+        <div class="card" data-anim data-delay="5">
+            <div class="card-icon">🔁</div>
+            <h3 class="card-title">Yeniden Yarış</h3>
+            <p class="card-text">
+                Bir sporcu haklı bir nedenle engellenirse (itme, düşme vb.), 
+                hakem kararıyla yarış tekrarlanabilir veya sporcu bir 
+                sonraki tura geçirilebilir.
+            </p>
+        </div>
+    </div>
+
+    <div class="divider" data-anim></div>
+
+    <h3 class="section-title" style="font-size:1.5rem; margin-bottom:var(--s-6);" data-anim>
+        Pist Görseli
+    </h3>
+
+    <div class="track-visual" data-anim data-delay="1">
+        <div class="track-ring">
+            <div class="runner"></div>
+        </div>
+    </div>
+
+    <p style="font-size:0.82rem; color:var(--fg-3); text-align:center; max-width:680px; margin:0 auto;" data-anim>
+        Standart 400 metrelik pistte 800 metre, iki tur koşulur. 
+        Sporcular ilk virajda kendi kulvarlarında kalır, ardından 
+        iç kulvara geçiş serbesttir.
+    </p>
+</section>
+
+<section class="section section-alt" id="fizyoloji">
+    <div class="section-inner">
+        <div class="section-header">
+            <span class="section-number" data-anim>03 · Fizyoloji</span>
+            <h2 class="section-title" data-anim data-delay="1">
+                Enerji Sistemlerinin <em>Kusursuz Dengesi</em>
+            </h2>
+            <p class="section-desc" data-anim data-delay="2">
+                800 metre, aerobik ve anaerobik sistemlerin neredeyse eşit 
+                katkı sağladığı nadir bir yarıştır. Bu denge, onu hem sprint 
+                hem de dayanıklılık özelliklerini aynı anda talep eden bir 
+                "melez" disiplin haline getirir.
+            </p>
+        </div>
+
+        <div class="divider-accent" data-anim></div>
+
+        <div class="grid grid-3" style="margin-top: var(--s-12);">
+            <div class="card" data-anim data-delay="1">
+                <div class="card-icon">⚡</div>
+                <h3 class="card-title">Anaerobik Sistem</h3>
+                <p class="card-text">
+                    800 metrenin <strong>%55-60'ı</strong> anaerobik glikoliz 
+                    ve fosfajen sistem tarafından karşılanır. Laktat üretimi 
+                    18-22 mmol/L seviyelerine ulaşır.
+                </p>
+            </div>
+            <div class="card" data-anim data-delay="2">
+                <div class="card-icon">🫁</div>
+                <h3 class="card-title">Aerobik Kapasite</h3>
+                <p class="card-text">
+                    VO₂max seviyeleri elit 800 metre koşucularında 
+                    <strong>70-75 ml/kg/dk</strong> aralığındadır. İlk 400 
+                    metrenin verimliliği kritiktir.
+                </p>
+            </div>
+            <div class="card" data-anim data-delay="3">
+                <div class="card-icon">📊</div>
+                <h3 class="card-title">Laktat Eşiği</h3>
+                <p class="card-text">
+                    Elit koşucular, <strong>12-15 mmol/L</strong> laktat 
+                    seviyelerinde bile performanslarını sürdürebilir. 
+                    Tamponlama kapasitesi kritiktir.
+                </p>
+            </div>
+        </div>
+
+        <div class="divider" data-anim></div>
+
+        <h3 class="section-title" style="font-size:1.5rem; margin-bottom:var(--s-6);" data-anim>
+            Enerji Sistemleri Katkı Oranları
+        </h3>
+
+        <div class="race-splits" data-anim data-delay="1">
+            <div class="split">
+                <div class="split-label">0 — 200 m</div>
+                <div class="split-time">~23.5 sn</div>
+                <div class="split-note">
+                    %70 Fosfajen<br>
+                    %20 Anaerobik Glikoliz<br>
+                    %10 Aerobik
+                </div>
+            </div>
+            <div class="split">
+                <div class="split-label">200 — 400 m</div>
+                <div class="split-time">~25.8 sn</div>
+                <div class="split-note">
+                    %30 Fosfajen<br>
+                    %50 Anaerobik Glikoliz<br>
+                    %20 Aerobik
+                </div>
+            </div>
+            <div class="split">
+                <div class="split-label">400 — 600 m</div>
+                <div class="split-time">~25.0 sn</div>
+                <div class="split-note">
+                    %10 Fosfajen<br>
+                    %60 Anaerobik Glikoliz<br>
+                    %30 Aerobik
+                </div>
+            </div>
+            <div class="split">
+                <div class="split-label">600 — 800 m</div>
+                <div class="split-time">~26.6 sn</div>
+                <div class="split-note">
+                    %5 Fosfajen<br>
+                    %45 Anaerobik Glikoliz<br>
+                    %50 Aerobik
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="taktik">
+    <div class="section-header">
+        <span class="section-number" data-anim>04 · Taktik</span>
+        <h2 class="section-title" data-anim data-delay="1">
+            Yarış İçi <em>Karar Alma</em>
+        </h2>
+        <p class="section-desc" data-anim data-delay="2">
+            800 metre, atletizmde taktiksel derinliğin en yüksek olduğu 
+            disiplinlerden biridir. Pozisyon alma, pace yönetimi ve son 
+            200 metre sprint kapasitesi, madalya sıralamasını belirleyen 
+            üç temel faktördür.
+        </p>
+    </div>
+
+    <div class="divider-accent" data-anim></div>
+
+    <div class="grid grid-3" style="margin-top:var(--s-8);">
+        <div class="stat-box" data-anim data-delay="1">
+            <div class="stat-box-value">4.</div>
+            <div class="stat-box-label">Ortalama Sıra — İlk 200 m</div>
+            <div class="stat-box-desc">
+                Büyük şampiyona madalya sahipleri, ilk 200 metrede ortalama 
+                4. sırada bulunur.
+            </div>
+        </div>
+        <div class="stat-box" data-anim data-delay="2">
+            <div class="stat-box-value">%59</div>
+            <div class="stat-box-label">İç Kulvar — 400 m</div>
+            <div class="stat-box-desc">
+                Madalya sahiplerinin %59'u 400 metre noktasında iç kulvarda 
+                konumlanır.
+            </div>
+        </div>
+        <div class="stat-box" data-anim data-delay="3">
+            <div class="stat-box-value">%86</div>
+            <div class="stat-box-label">Pozitif Split</div>
+            <div class="stat-box-desc">
+                Son 7 büyük şampiyonanın 6'sında madalya sahipleri, ilk 400 
+                metreyi ikinci 400'den daha hızlı koşmuştur.
+            </div>
+        </div>
+    </div>
+
+    <div class="divider" data-anim></div>
+
+    <h3 class="section-title" style="font-size:1.5rem; margin-bottom:var(--s-6);" data-anim>
+        Taktiksel Yaklaşımlar
+    </h3>
+
+    <div class="grid grid-2">
+        <div class="card" data-anim data-delay="1">
+            <h3 class="card-title">Tavşan Stratejisi (Front-Running)</h3>
+            <p class="card-text">
+                Yarışı baştan sona lider götürerek ritmi belirlemek. 
+                David Rudisha'nın 2012 Londra finalinde uyguladığı taktik. 
+                Rakipleri kendi temposuna zorlar.
+            </p>
+        </div>
+        <div class="card" data-anim data-delay="2">
+            <h3 class="card-title">Bekle-Gör (Sit-and-Kick)</h3>
+            <p class="card-text">
+                İlk 400 metrede enerji tasarrufu yapıp son 200 metrede 
+                patlama. Şampiyona finallerinde sık tercih edilir.
+            </p>
+        </div>
+        <div class="card" data-anim data-delay="3">
+            <h3 class="card-title">Kademeli Artış (Negative Split)</h3>
+            <p class="card-text">
+                Her 200 metrede pace'i kademeli olarak artırma. 
+                Laktat birikimini yönetmeyi ve son 200 metrede 
+                maksimum hızı korumayı sağlar.
+            </p>
+        </div>
+        <div class="card" data-anim data-delay="4">
+            <h3 class="card-title">İç Kulvar Savaşı</h3>
+            <p class="card-text">
+                400 metre noktasında iç kulvarda olmak, madalya şansını 
+                %59 oranında artırır. Ancak enerji maliyeti vardır.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="section section-alt" id="rekorlar">
+    <div class="section-inner">
+        <div class="section-header">
+            <span class="section-number" data-anim>05 · Rekorlar</span>
+            <h2 class="section-title" data-anim data-delay="1">
+                Tarihin <em>En Hızlıları</em>
+            </h2>
+            <p class="section-desc" data-anim data-delay="2">
+                800 metre dünya rekorları, atletizm tarihinin en dayanıklı 
+                kayıtları arasındadır. Erkeklerde Rudisha'nın 2012'deki 
+                1:40.91'i, kadınlarda ise Kratochvílová'nın 1983'teki 
+                1:53.28'i hâlâ kırılamamıştır.
+            </p>
+        </div>
+
+        <div class="divider-accent" data-anim></div>
+
+        <div class="tabs" data-anim>
+            <button class="tab active" data-tab="erkekler">Erkekler · En Hızlı 10</button>
+            <button class="tab" data-tab="kadinlar">Kadınlar · En Hızlı 5</button>
+            <button class="tab" data-tab="turkiye">Türkiye Rekorları</button>
+            <button class="tab" data-tab="olimpiyat">Olimpiyat Şampiyonları</button>
+        </div>
+
+        <div class="tab-panel active" id="tab-erkekler">
+            <div class="table-wrap">
+                <table class="record-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Derece</th>
+                            <th>Sporcu</th>
+                            <th>Ülke</th>
+                            <th>Tarih</th>
+                            <th>Yer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="highlight-row">
+                            <td class="rank">1</td>
+                            <td class="time">1:40.91</td>
+                            <td class="name">David Rudisha</td>
+                            <td><span class="flag">🇰🇪</span>Kenya</td>
+                            <td>09.08.2012</td>
+                            <td>Londra</td>
+                        </tr>
+                        <tr>
+                            <td class="rank">2</td>
+                            <td class="time">1:41.11</td>
+                            <td class="name">Wilson Kipketer</td>
+                            <td><span class="flag">🇩🇰</span>Danimarka</td>
+                            <td>24.08.1997</td>
+                            <td>Köln</td>
+                        </tr>
+                        <tr>
+                            <td class="rank">3</td>
+                            <td class="time">1:41.20</td>
+                            <td class="name">Marco Arop</td>
+                            <td><span class="flag">🇨🇦</span>Kanada</td>
+                            <td>10.08.2024</td>
+                            <td>Paris</td>
+                        </tr>
+                        <tr>
+                            <td class="rank">4</td>
+                            <td class="time">1:41.24</td>
+                            <td class="name">Emmanuel Wanyonyi</td>
+                            <td><span class="flag">🇰🇪</span>Kenya</td>
+                            <td>22.08.2024</td>
+                            <td>Lozan</td>
+                        </tr>
+                        <tr>
+                            <td class="rank">5</td>
+                            <td class="time">1:41.61</td>
+                            <td class="name">Djamel Sedjati</td>
+                            <td><span class="flag">🇩🇿</span>Cezayir</td>
+                            <td>12.07.2024</td>
+                            <td>Monako</td>
+                        </tr>
+                        <tr>
+                            <td class="rank">6</td>
+                            <td class="time">1:41.73</td>
+                            <td class="name">Nijel Amos</td>
+                            <td><span class="flag">🇧🇼</span>Botsvana</td>
+                            <td>09.08.2012</td>
+                            <td>Londra</td>
+                        </tr>
+                        <tr>
+                            <td class="rank">7</td>
+                            <td class="time">1:41.77</td>
+                            <td class="name">Joaquim Cruz</td>
+                            <td><span class="flag">🇧🇷</span>Brezilya</td>
+                            <td>26.08.1984</td>
+                            <td>Köln</td>
+                        </tr>
+                        <tr>
+                            <td class="rank">8</td>
+                            <td class="time">1:42.05</td>
+                            <td class="name">Sebastian Coe</td>
+                            <td><span class="flag">🇬🇧</span>İngiltere</td>
+                            <td>1981</td>
+                            <td>Oslo</td>
+                        </tr>
+                        <tr>
+                            <td class="rank">9</td>
+                            <td class="time">1:42.08</td>
+                            <td class="name">Abubaker Kaki</td>
+                            <td><span class="flag">🇸🇩</span>Sudan</td>
+                            <td>2010</td>
+                            <td>Oslo</td>
+                        </tr>
+                        <tr>
+                            <td class="rank">10</td>
+                            <td class="time">1:42.23</td>
+                            <td class="name">Yuriy Borzakovskiy</td>
+                            <td><span class="flag">🇷🇺</span>Rusya</td>
+                            <td>2001</td>
+                            <td>Brüksel</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="tab-panel" id="tab-kadinlar">
+            <div class="table-wrap">
+                <table class="record-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Derece</th>
+                            <th>Sporcu</th>
+                            <th>Ülke</th>
+                            <th>Tarih</th>
+                            <th>Yer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="highlight-row">
+                            <td class="rank">1</td>
+                            <td class="time">1:53.28</td>
+                            <td class="name">Jarmila Kratochvílová</td>
+                            <td><span class="flag">🇨🇿</span>Çekoslovakya</td>
+                            <td>26.07.1983</td>
+                            <td>Münih</td>
+                        </tr>
+                        <tr>
+                            <td class="rank">2</td>
+                            <td class="time">1:53.43</td>
+                            <td class="name">Nadezhda Olizarenko</td>
+                            <td><span class="flag">🇺🇦</span>Ukrayna</td>
+                            <td>27.07.1980</td>
+                            <td>Moskova</td>
+                        </tr>
+                        <tr>
+                            <td class="rank">3</td>
+                            <td class="time">1:53.80</td>
+                            <td class="name">Audrey Werro</td>
+                            <td><span class="flag">🇨🇭</span>İsviçre</td>
+                            <td>2026</td>
+                            <td>Paris</td>
+                        </tr>
+                        <tr>
+                            <td class="rank">4</td>
+                            <td class="time">1:54.01</td>
+                            <td class="name">Pamela Jelimo</td>
+                            <td><span class="flag">🇰🇪</span>Kenya</td>
+                            <td>29.08.2008</td>
+                            <td>Zürih</td>
+                        </tr>
+                        <tr>
+                            <td class="rank">5</td>
+                            <td class="time">1:54.25</td>
+                            <td class="name">Caster Semenya</td>
+                            <td><span class="flag">🇿🇦</span>Güney Afrika</td>
+                            <td>30.06.2018</td>
+                            <td>Paris</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="tab-panel" id="tab-turkiye">
+            <div class="grid grid-2">
+                <div class="card">
+                    <div class="badge">Erkekler</div>
+                    <h3 class="card-title" style="margin-top:var(--s-4);">Sermet Timurlenk</h3>
+                    <div class="athlete-pb">1:47.23</div>
+                    <p class="card-text">
+                        1978 yılında kırılan bu rekor, <strong>48 yıldır</strong> 
+                        kırılamıyor. Türkiye atletizminin en dayanıklı rekoru.
+                    </p>
+                </div>
+                <div class="card">
+                    <div class="badge">Kadınlar</div>
+                    <h3 class="card-title" style="margin-top:var(--s-4);">Dilek Koçak</h3>
+                    <div class="athlete-pb">1:59.94</div>
+                    <p class="card-text">
+                        2024 yılında 2 dakikanın altını koşan ilk Türk 
+                        kadın atlet oldu. Tarihi bir eşik aşıldı.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-panel" id="tab-olimpiyat">
+            <div class="table-wrap">
+                <table class="record-table">
+                    <thead>
+                        <tr>
+                            <th>Yıl</th>
+                            <th>Şampiyon</th>
+                            <th>Ülke</th>
+                            <th>Derece</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2024 Paris</td>
+                            <td class="name">Emmanuel Wanyonyi</td>
+                            <td><span class="flag">🇰🇪</span>Kenya</td>
+                            <td class="time">1:41.19</td>
+                        </tr>
+                        <tr>
+                            <td>2020 Tokyo</td>
+                            <td class="name">Emmanuel Korir</td>
+                            <td><span class="flag">🇰🇪</span>Kenya</td>
+                            <td class="time">1:45.06</td>
+                        </tr>
+                        <tr>
+                            <td>2016 Rio</td>
+                            <td class="name">David Rudisha</td>
+                            <td><span class="flag">🇰🇪</span>Kenya</td>
+                            <td class="time">1:42.15</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td>2012 Londra</td>
+                            <td class="name">David Rudisha</td>
+                            <td><span class="flag">🇰🇪</span>Kenya</td>
+                            <td class="time">1:40.91 WR</td>
+                        </tr>
+                        <tr>
+                            <td>2008 Pekin</td>
+                            <td class="name">Wilfred Bungei</td>
+                            <td><span class="flag">🇰🇪</span>Kenya</td>
+                            <td class="time">1:44.65</td>
+                        </tr>
+                        <tr>
+                            <td>2004 Atina</td>
+                            <td class="name">Yuriy Borzakovskiy</td>
+                            <td><span class="flag">🇷🇺</span>Rusya</td>
+                            <td class="time">1:44.45</td>
+                        </tr>
+                        <tr>
+                            <td>2000 Sidney</td>
+                            <td class="name">Nils Schumann</td>
+                            <td><span class="flag">🇩🇪</span>Almanya</td>
+                            <td class="time">1:45.08</td>
+                        </tr>
+                        <tr>
+                            <td>1996 Atlanta</td>
+                            <td class="name">Vebjørn Rodal</td>
+                            <td><span class="flag">🇳🇴</span>Norveç</td>
+                            <td class="time">1:42.58</td>
+                        </tr>
+                        <tr>
+                            <td>1992 Barselona</td>
+                            <td class="name">William Tanui</td>
+                            <td><span class="flag">🇰🇪</span>Kenya</td>
+                            <td class="time">1:43.66</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="efsaneler">
+    <div class="section-header">
+        <span class="section-number" data-anim>06 · Efsaneler</span>
+        <h2 class="section-title" data-anim data-delay="1">
+            Branşın <em>İkonik İsimleri</em>
+        </h2>
+        <p class="section-desc" data-anim data-delay="2">
+            800 metre tarihine damga vuran atletler, sadece hızlarıyla değil 
+            taktik zekâları, karakterleri ve yarış içi kararlarıyla da 
+            branşın kimliğini şekillendirdi.
+        </p>
+    </div>
+
+    <div class="divider-accent" data-anim></div>
+
+    <div class="grid grid-3" style="margin-top:var(--s-8);">
+        <div class="athlete-card" data-anim data-delay="1">
+            <div class="athlete-country">🇰🇪</div>
+            <h3 class="athlete-name">David Rudisha</h3>
+            <div class="athlete-meta">Kenya · 1988 —</div>
+            <div class="athlete-pb">1:40.91 WR</div>
+            <p class="athlete-note">
+                Dünya rekoru sahibi. 2012 ve 2016 Olimpiyat şampiyonu. 
+                Modern 800 metrenin kralı.
+            </p>
+        </div>
+        <div class="athlete-card" data-anim data-delay="2">
+            <div class="athlete-country">🇩🇰</div>
+            <h3 class="athlete-name">Wilson Kipketer</h3>
+            <div class="athlete-meta">Danimarka · 1972 —</div>
+            <div class="athlete-pb">1:41.11</div>
+            <p class="athlete-note">
+                1997-2012 arası dünya rekoru sahibi. Üst üste 3 dünya 
+                şampiyonluğu.
+            </p>
+        </div>
+        <div class="athlete-card" data-anim data-delay="3">
+            <div class="athlete-country">🇬🇧</div>
+            <h3 class="athlete-name">Sebastian Coe</h3>
+            <div class="athlete-meta">İngiltere · 1956 —</div>
+            <div class="athlete-pb">1:41.73</div>
+            <p class="athlete-note">
+                1980 ve 1984 Olimpiyat şampiyonu. IAAF Başkanlığı yaptı. 
+                Taktiksel zekâsı efsanevidir.
+            </p>
+        </div>
+        <div class="athlete-card" data-anim data-delay="4">
+            <div class="athlete-country">🇨🇺</div>
+            <h3 class="athlete-name">Alberto Juantorena</h3>
+            <div class="athlete-meta">Küba · 1950 —</div>
+            <div class="athlete-pb">1:43.44</div>
+            <p class="athlete-note">
+                "El Caballo" (At). 1976 Montreal'de hem 400 hem 800 metre 
+                kazanan tek erkek atlet.
+            </p>
+        </div>
+        <div class="athlete-card" data-anim data-delay="5">
+            <div class="athlete-country">🇨🇿</div>
+            <h3 class="athlete-name">Jarmila Kratochvílová</h3>
+            <div class="athlete-meta">Çekoslovakya · 1951 —</div>
+            <div class="athlete-pb">1:53.28 WR</div>
+            <p class="athlete-note">
+                1983'ten beri kadınlar dünya rekoru sahibi. Atletizm 
+                tarihinin en dayanıklı rekorlarından biri.
+            </p>
+        </div>
+        <div class="athlete-card" data-anim data-delay="6">
+            <div class="athlete-country">🇰🇪</div>
+            <h3 class="athlete-name">Emmanuel Wanyonyi</h3>
+            <div class="athlete-meta">Kenya · 2004 —</div>
+            <div class="athlete-pb">1:41.11</div>
+            <p class="athlete-note">
+                2024 Paris Olimpiyat şampiyonu. Genç yaşında 1:41 
+                seviyesine inen yeni nesil yıldız.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     VİDEO BÖLÜMÜ — 3:20'DEN BAŞLIYOR
+     YouTube IFrame API kullanarak video yüklendiğinde otomatik
+     olarak 200. saniyeye (3:20) atlar.
+     ============================================================ -->
+<section class="section section-alt" id="video">
+    <div class="section-inner">
+        <div class="section-header">
+            <span class="section-number" data-anim>07 · Video</span>
+            <h2 class="section-title" data-anim data-delay="1">
+                Görsel <em>Analiz</em>
+            </h2>
+            <p class="section-desc" data-anim data-delay="2">
+                Video <strong>3:20 (200. saniye)</strong> noktasından başlayacak 
+                şekilde ayarlanmıştır. Oynat butonuna bastığında doğrudan 
+                o andan itibaren oynamaya başlar.
+            </p>
+        </div>
+
+        <div class="divider-accent" data-anim></div>
+
+        <div class="video-wrap" data-anim data-delay="1" style="margin-top:var(--s-8);">
+            <div id="ytPlayer"></div>
+        </div>
+
+        <div class="video-timestamp" data-anim data-delay="2">
+            3:20'den başlıyor · 200. saniye
+        </div>
+    </div>
+</section>
+
+<section class="section" id="test">
+    <div class="section-header">
+        <span class="section-number" data-anim>08 · Bilgi Testi</span>
+        <h2 class="section-title" data-anim data-delay="1">
+            Branşı <em>Ne Kadar İyi Tanıyorsun?</em>
+        </h2>
+        <p class="section-desc" data-anim data-delay="2">
+            Aşağıdaki kısa test ile 800 metre branşı hakkındaki bilgini 
+            sınayabilirsin.
+        </p>
+    </div>
+
+    <div class="divider-accent" data-anim></div>
+
+    <div class="quiz-wrap" style="margin-top:var(--s-8);" data-anim data-delay="1">
+        <div class="quiz-question">
+            Erkekler 800 metre dünya rekoru kimin elinde?
+        </div>
+        <div class="quiz-options" id="quizOptions">
+            <button class="quiz-option" data-correct="false">Wilson Kipketer</button>
+            <button class="quiz-option" data-correct="true">David Rudisha</button>
+            <button class="quiz-option" data-correct="false">Sebastian Coe</button>
+            <button class="quiz-option" data-correct="false">Emmanuel Wanyonyi</button>
+        </div>
+        <div class="quiz-feedback" id="quizFeedback"></div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="footer-inner">
+        <div>
+            <div class="footer-brand">800 <em>Metre</em></div>
+            <p class="footer-text">
+                İki turun bilimi. Sprint ve dayanıklılığın kusursuz dengesi. 
+                Bu sunum, elit atletizm verileri ve dünya standartlarındaki 
+                kaynaklar kullanılarak hazırlanmıştır.
+            </p>
+        </div>
+        <div>
+            <div class="footer-col-title">Bölümler</div>
+            <ul class="footer-list">
+                <li><a href="#tarih">Tarihçe</a></li>
+                <li><a href="#kurallar">Kurallar</a></li>
+                <li><a href="#fizyoloji">Fizyoloji</a></li>
+                <li><a href="#taktik">Taktik</a></li>
+                <li><a href="#rekorlar">Rekorlar</a></li>
+            </ul>
+        </div>
+        <div>
+            <div class="footer-col-title">Kaynaklar</div>
+            <ul class="footer-list">
+                <li><a href="#">World Athletics</a></li>
+                <li><a href="#">Athletics Weekly</a></li>
+                <li><a href="#">Olympic Channel</a></li>
+                <li><a href="#">NCAA Sport Science</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="footer-copy">© 2026 · 800 METRE · Tüm hakları saklıdır.</div>
+        <div class="footer-copy">Tasarım & Analiz · Elit Sunum Serisi</div>
+    </div>
+</footer>
+
+<!-- ============================================================
+     YOUTUBE IFRAME API — 3:20'DEN BAŞLATMA
+     ============================================================ -->
+<script>
+// YouTube IFrame API'yi yükle
+var tag = document.createElement('script');
+tag.src = 'https://www.youtube.com/iframe_api';
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+var ytPlayer;
+var SEEK_TIME = 200; // 3:20 = 200 saniye
+var hasSeeked = false;
+
+// API hazır olduğunda çağrılır
+function onYouTubeIframeAPIReady() {
+    ytPlayer = new YT.Player('ytPlayer', {
+        videoId: 'YKEOjWEzVGs',
+        playerVars: {
+            'start': SEEK_TIME,
+            'rel': 0,
+            'modestbranding': 1,
+            'playsinline': 1,
+            'controls': 1,
+            'showinfo': 0,
+            'iv_load_policy': 3,
+            'fs': 1,
+            'origin': window.location.origin
+        },
+        events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+        }
+    });
+}
+
+// Player hazır olduğunda
+function onPlayerReady(event) {
+    // Videoyu 200. saniyeye ayarla (3:20)
+    event.target.seekTo(SEEK_TIME, true);
+    console.log('✓ YouTube Player hazır. 3:20 (200s) noktasına ayarlandı.');
+}
+
+// Player durumu değiştiğinde
+function onPlayerStateChange(event) {
+    // Kullanıcı oynat'a bastığında
+    if (event.data === YT.PlayerState.PLAYING) {
+        var currentTime = ytPlayer.getCurrentTime();
+        // Eğer 3:20'den önceyse, 3:20'ye atla
+        if (currentTime < SEEK_TIME - 1) {
+            ytPlayer.seekTo(SEEK_TIME, true);
+            console.log('→ Video 3:20\'ye atlandı (' + currentTime.toFixed(1) + 's → ' + SEEK_TIME + 's)');
+        }
+        hasSeeked = true;
+    }
+}
+</script>
+
+<!-- ============================================================
+     ANA JAVASCRIPT — UI ETKİLEŞİMLERİ
+     ============================================================ -->
+<script>
+(function () {
+    'use strict';
+
+    /* ============================================================
+       SCROLL İLERLEME ÇUBUĞU
+       ============================================================ */
+    const progressBar = document.getElementById('progressBar');
+
+    function updateProgress() {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        if (progressBar) progressBar.style.width = pct + '%';
+    }
+
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    window.addEventListener('resize', updateProgress);
+    updateProgress();
+
+    /* ============================================================
+       NAVİGASYON
+       ============================================================ */
+    const nav = document.getElementById('nav');
+    let lastScrollY = window.scrollY;
+
+    window.addEventListener('scroll', function () {
+        const currentY = window.scrollY;
+        if (currentY > lastScrollY && currentY > 200) {
+            nav.classList.add('hidden');
+        } else {
+            nav.classList.remove('hidden');
+        }
+        lastScrollY = currentY;
+    }, { passive: true });
+
+    const sections = document.querySelectorAll('section[id], header[id]');
+    const navLinks = document.querySelectorAll('[data-link]');
+
+    function updateActiveLink() {
+        let current = '';
+        sections.forEach(function (s) {
+            const top = s.offsetTop - 200;
+            if (window.scrollY >= top) current = s.id;
+        });
+        navLinks.forEach(function (link) {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + current) {
+                link.classList.add('active');
+            }
+        });
+    }
+    window.addEventListener('scroll', updateActiveLink, { passive: true });
+    updateActiveLink();
+
+    /* ============================================================
+       SCROLL ANİMASYONLARI
+       ============================================================ */
+    const animEls = document.querySelectorAll('[data-anim]');
+    const observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('in-view');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.12,
+        rootMargin: '0px 0px -60px 0px'
+    });
+
+    animEls.forEach(function (el) { observer.observe(el); });
+
+    /* ============================================================
+       SAYAÇ ANİMASYONU
+       ============================================================ */
+    function animateCount(el, target, duration) {
+        const start = performance.now();
+
+        function step(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const value = target * eased;
+            el.textContent = Math.floor(value).toLocaleString('tr-TR');
+            if (progress < 1) requestAnimationFrame(step);
+            else el.textContent = target.toLocaleString('tr-TR');
+        }
+        requestAnimationFrame(step);
+    }
+
+    const countEls = document.querySelectorAll('[data-count]');
+    const countObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                const el = entry.target;
+                const target = parseFloat(el.getAttribute('data-count'));
+                animateCount(el, target, 1800);
+                countObserver.unobserve(el);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    countEls.forEach(function (el) { countObserver.observe(el); });
+
+    /* ============================================================
+       SEKMELER
+       ============================================================ */
+    const tabs = document.querySelectorAll('.tab');
+    const panels = document.querySelectorAll('.tab-panel');
+
+    tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+            const targetId = 'tab-' + tab.getAttribute('data-tab');
+            tabs.forEach(function (t) { t.classList.remove('active'); });
+            panels.forEach(function (p) { p.classList.remove('active'); });
+            tab.classList.add('active');
+            const panel = document.getElementById(targetId);
+            if (panel) panel.classList.add('active');
+        });
+    });
+
+    /* ============================================================
+       QUIZ
+       ============================================================ */
+    const quizOptions = document.querySelectorAll('#quizOptions .quiz-option');
+    const quizFeedback = document.getElementById('quizFeedback');
+
+    quizOptions.forEach(function (opt) {
+        opt.addEventListener('click', function () {
+            const isCorrect = opt.getAttribute('data-correct') === 'true';
+            quizOptions.forEach(function (o) {
+                o.disabled = true;
+                o.style.cursor = 'default';
+                if (o.getAttribute('data-correct') === 'true') {
+                    o.classList.add('correct');
+                }
+            });
+            if (!isCorrect) opt.classList.add('wrong');
+
+            if (quizFeedback) {
+                quizFeedback.classList.add('show');
+                if (isCorrect) {
+                    quizFeedback.classList.add('ok');
+                    quizFeedback.classList.remove('no');
+                    quizFeedback.textContent = '✓ Doğru! David Rudisha, 9 Ağustos 2012\'de Londra Olimpiyatları finalinde 1:40.91 koşarak dünya rekorunu kırdı.';
+                } else {
+                    quizFeedback.classList.add('no');
+                    quizFeedback.classList.remove('ok');
+                    quizFeedback.textContent = '✗ Yanlış. Doğru cevap: David Rudisha (1:40.91, 2012 Londra).';
+                }
+            }
+        });
+    });
+
+    /* ============================================================
+       YUMUŞAK KAYDIRMA
+       ============================================================ */
+    document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
+        anchor.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+            if (href === '#' || href.length < 2) return;
+            const target = document.querySelector(href);
+            if (target) {
+                e.preventDefault();
+                const top = target.offsetTop - 80;
+                window.scrollTo({ top: top, behavior: 'smooth' });
+            }
+        });
+    });
+
+    /* ============================================================
+       KLAVYE KISAYOLLARI
+       ============================================================ */
+    document.addEventListener('keydown', function (e) {
+        if ((e.key === 't' || e.key === 'T') &&
+            e.target.tagName !== 'INPUT' &&
+            e.target.tagName !== 'TEXTAREA') {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    });
+
+    /* ============================================================
+       HIGHLIGHT ROW ANİMASYONU
+       ============================================================ */
+    const highlightRows = document.querySelectorAll('.highlight-row');
+    let highlightIndex = 0;
+    if (highlightRows.length > 0) {
+        setInterval(function () {
+            highlightRows.forEach(function (row, i) {
+                row.style.transition = 'background 0.6s ease';
+                if (i === highlightIndex) {
+                    row.style.background = 'rgba(212, 175, 55, 0.10)';
+                } else {
+                    row.style.background = '';
+                }
+            });
+            highlightIndex = (highlightIndex + 1) % highlightRows.length;
+        }, 2400);
+    }
+
+    /* ============================================================
+       KONSOL
+       ============================================================ */
+    console.log('%c800 METRE', 'font-size: 32px; font-weight: 900; color: #d4af37; font-family: Playfair Display, serif;');
+    console.log('%cBranşın kapsamlı analizi — Video 3:20\'den başlıyor.', 'font-size: 13px; color: #b8b2a7;');
+
+})();
+</script>
+
+</body>
+</html>
