@@ -853,7 +853,7 @@ table.record-table {
 .quote-author::before { content: '— '; opacity: 0.5; }
 
 /* ============================================================
-   VİDEO ALANI — 3:20'DEN BAŞLIYOR (YOUTUBE API İLE ZORLAMA)
+   VİDEO ALANI — KAPAK + OYNAT BUTONU (TIKLAYANA KADAR YÜKLENMEZ)
    ============================================================ */
 .video-wrap {
     position: relative;
@@ -869,13 +869,171 @@ table.record-table {
 
 .video-wrap:hover { border-color: var(--border-accent); }
 
-#ytPlayer,
-.video-wrap iframe {
+.video-wrap iframe,
+.video-wrap #ytPlayer {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     border: none;
+}
+
+/* Kapak (poster) katmanı — tıklanana kadar görünür */
+.video-cover {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--s-6);
+    cursor: pointer;
+    overflow: hidden;
+    background: #000;
+    transition: opacity 0.5s var(--ease-2), visibility 0.5s;
+}
+
+.video-cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.12), transparent 60%),
+        linear-gradient(135deg, #0a0a0c 0%, #14141a 50%, #0a0a0c 100%);
+    z-index: 0;
+}
+
+.video-cover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        repeating-linear-gradient(
+            45deg,
+            transparent 0,
+            transparent 40px,
+            rgba(212, 175, 55, 0.02) 40px,
+            rgba(212, 175, 55, 0.02) 41px
+        );
+    z-index: 0;
+    pointer-events: none;
+}
+
+.video-cover.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.video-cover-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--s-5);
+    text-align: center;
+    padding: var(--s-8);
+}
+
+.play-btn {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: rgba(212, 175, 55, 0.1);
+    border: 2px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.4s var(--ease-2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.play-btn::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    animation: playRipple 2.4s ease-out infinite;
+}
+
+.play-btn::after {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    animation: playRipple 2.4s ease-out infinite 1.2s;
+}
+
+@keyframes playRipple {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(1.6); opacity: 0; }
+}
+
+.play-btn:hover {
+    background: var(--accent);
+    transform: scale(1.08);
+    box-shadow: 0 0 40px var(--accent-glow), 0 0 80px rgba(212, 175, 55, 0.15);
+}
+
+.play-btn:hover svg {
+    fill: var(--bg);
+    transform: scale(1.05);
+}
+
+.play-btn svg {
+    width: 34px;
+    height: 34px;
+    fill: var(--accent);
+    margin-left: 6px;
+    transition: all 0.4s var(--ease-2);
+}
+
+.video-cover-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+    font-weight: 700;
+    color: var(--fg);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+}
+
+.video-cover-subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-3);
+}
+
+.video-cover-subtitle::before,
+.video-cover-subtitle::after {
+    content: '';
+    width: 28px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent));
+}
+
+.video-cover-subtitle::after {
+    background: linear-gradient(90deg, var(--accent), transparent);
+}
+
+.video-cover-hint {
+    font-size: 0.75rem;
+    color: var(--fg-3);
+    font-family: var(--font-mono);
+    letter-spacing: 0.12em;
+    margin-top: var(--s-2);
 }
 
 .video-timestamp {
@@ -900,9 +1058,6 @@ table.record-table {
     font-size: 0.7rem;
 }
 
-/* ============================================================
-   SEKMELER
-   ============================================================ */
 .tabs {
     display: flex;
     gap: var(--s-2);
@@ -1230,6 +1385,8 @@ table.record-table {
     .hero-stat + .hero-stat::before { display: none; }
     .footer { padding: var(--s-16) var(--s-6) var(--s-8); }
     .footer-inner { grid-template-columns: 1fr; gap: var(--s-8); }
+    .play-btn { width: 76px; height: 76px; }
+    .play-btn svg { width: 26px; height: 26px; }
 }
 </style>
 </head>
@@ -2054,9 +2211,10 @@ table.record-table {
 </section>
 
 <!-- ============================================================
-     VİDEO BÖLÜMÜ — 3:20'DEN BAŞLIYOR
-     YouTube IFrame API kullanarak video yüklendiğinde otomatik
-     olarak 200. saniyeye (3:20) atlar.
+     VİDEO BÖLÜMÜ
+     Kapak resmi gösterilir. Kullanıcı "Oynat" butonuna bastığında:
+     - YouTube IFrame API dinamik olarak yüklenir
+     - Video 3:20 (200. saniye)'den başlatılır
      ============================================================ -->
 <section class="section section-alt" id="video">
     <div class="section-inner">
@@ -2066,16 +2224,28 @@ table.record-table {
                 Görsel <em>Analiz</em>
             </h2>
             <p class="section-desc" data-anim data-delay="2">
-                Video <strong>3:20 (200. saniye)</strong> noktasından başlayacak 
-                şekilde ayarlanmıştır. Oynat butonuna bastığında doğrudan 
-                o andan itibaren oynamaya başlar.
+                Video, <strong>sen butona basana kadar yüklenmez</strong>. 
+                Oynat butonuna bastığında video <strong>3:20 (200. saniye)</strong> 
+                noktasından başlar.
             </p>
         </div>
 
         <div class="divider-accent" data-anim></div>
 
         <div class="video-wrap" data-anim data-delay="1" style="margin-top:var(--s-8);">
-            <div id="ytPlayer"></div>
+            <!-- Kapak katmanı: butona basılana kadar görünür -->
+            <div class="video-cover" id="videoCover">
+                <div class="video-cover-content">
+                    <button class="play-btn" id="playBtn" aria-label="Videoyu oynat">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </button>
+                    <div class="video-cover-title">800 Metre — Elit Performans</div>
+                    <div class="video-cover-subtitle">Görsel Analiz</div>
+                    <div class="video-cover-hint">Videoyu başlatmak için butona bas · 3:20'den başlar</div>
+                </div>
+            </div>
         </div>
 
         <div class="video-timestamp" data-anim data-delay="2">
@@ -2148,67 +2318,6 @@ table.record-table {
     </div>
 </footer>
 
-<!-- ============================================================
-     YOUTUBE IFRAME API — 3:20'DEN BAŞLATMA
-     ============================================================ -->
-<script>
-// YouTube IFrame API'yi yükle
-var tag = document.createElement('script');
-tag.src = 'https://www.youtube.com/iframe_api';
-var firstScriptTag = document.getElementsByTagName('script')[0];
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-var ytPlayer;
-var SEEK_TIME = 200; // 3:20 = 200 saniye
-var hasSeeked = false;
-
-// API hazır olduğunda çağrılır
-function onYouTubeIframeAPIReady() {
-    ytPlayer = new YT.Player('ytPlayer', {
-        videoId: 'YKEOjWEzVGs',
-        playerVars: {
-            'start': SEEK_TIME,
-            'rel': 0,
-            'modestbranding': 1,
-            'playsinline': 1,
-            'controls': 1,
-            'showinfo': 0,
-            'iv_load_policy': 3,
-            'fs': 1,
-            'origin': window.location.origin
-        },
-        events: {
-            'onReady': onPlayerReady,
-            'onStateChange': onPlayerStateChange
-        }
-    });
-}
-
-// Player hazır olduğunda
-function onPlayerReady(event) {
-    // Videoyu 200. saniyeye ayarla (3:20)
-    event.target.seekTo(SEEK_TIME, true);
-    console.log('✓ YouTube Player hazır. 3:20 (200s) noktasına ayarlandı.');
-}
-
-// Player durumu değiştiğinde
-function onPlayerStateChange(event) {
-    // Kullanıcı oynat'a bastığında
-    if (event.data === YT.PlayerState.PLAYING) {
-        var currentTime = ytPlayer.getCurrentTime();
-        // Eğer 3:20'den önceyse, 3:20'ye atla
-        if (currentTime < SEEK_TIME - 1) {
-            ytPlayer.seekTo(SEEK_TIME, true);
-            console.log('→ Video 3:20\'ye atlandı (' + currentTime.toFixed(1) + 's → ' + SEEK_TIME + 's)');
-        }
-        hasSeeked = true;
-    }
-}
-</script>
-
-<!-- ============================================================
-     ANA JAVASCRIPT — UI ETKİLEŞİMLERİ
-     ============================================================ -->
 <script>
 (function () {
     'use strict';
@@ -2411,13 +2520,123 @@ function onPlayerStateChange(event) {
     }
 
     /* ============================================================
+       VİDEO — SADECE BUTONA BASILINCA YÜKLE VE 3:20'DEN BAŞLAT
+       ============================================================ */
+    var SEEK_TIME = 200; // 3:20 = 200 saniye
+    var VIDEO_ID = 'YKEOjWEzVGs';
+    var ytPlayer = null;
+    var ytApiLoading = false;
+    var videoStarted = false;
+
+    var playBtn = document.getElementById('playBtn');
+    var videoCover = document.getElementById('videoCover');
+    var videoWrap = document.querySelector('.video-wrap');
+
+    // YouTube IFrame API'sini dinamik olarak yükle
+    function loadYouTubeAPI(callback) {
+        if (window.YT && window.YT.Player) {
+            callback();
+            return;
+        }
+        if (ytApiLoading) {
+            // API yükleniyor, hazır olunca çağır
+            var checkInterval = setInterval(function () {
+                if (window.YT && window.YT.Player) {
+                    clearInterval(checkInterval);
+                    callback();
+                }
+            }, 100);
+            return;
+        }
+        ytApiLoading = true;
+
+        // Global callback
+        window.onYouTubeIframeAPIReady = function () {
+            callback();
+        };
+
+        var tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        document.head.appendChild(tag);
+    }
+
+    // Video alanını oluştur ve oynat
+    function startVideo() {
+        if (videoStarted) return;
+        videoStarted = true;
+
+        // Kapak katmanını gizle
+        videoCover.classList.add('hidden');
+
+        // 300ms sonra (fade out tamamlanınca) iframe yerleştir
+        setTimeout(function () {
+            // Player için bir div oluştur
+            var playerDiv = document.createElement('div');
+            playerDiv.id = 'ytPlayer';
+            playerDiv.style.position = 'absolute';
+            playerDiv.style.inset = '0';
+            playerDiv.style.width = '100%';
+            playerDiv.style.height = '100%';
+            videoWrap.appendChild(playerDiv);
+
+            // YouTube API'yi yükle ve player'ı oluştur
+            loadYouTubeAPI(function () {
+                ytPlayer = new YT.Player('ytPlayer', {
+                    videoId: VIDEO_ID,
+                    playerVars: {
+                        'start': SEEK_TIME,
+                        'autoplay': 1,
+                        'rel': 0,
+                        'modestbranding': 1,
+                        'playsinline': 1,
+                        'controls': 1,
+                        'fs': 1,
+                        'iv_load_policy': 3,
+                        'origin': window.location.origin
+                    },
+                    events: {
+                        'onReady': function (event) {
+                            event.target.seekTo(SEEK_TIME, true);
+                            event.target.playVideo();
+                            console.log('✓ Video 3:20\'den başlatıldı');
+                        },
+                        'onStateChange': function (event) {
+                            if (event.data === YT.PlayerState.PLAYING) {
+                                var t = ytPlayer.getCurrentTime();
+                                if (t < SEEK_TIME - 1) {
+                                    ytPlayer.seekTo(SEEK_TIME, true);
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        }, 350);
+    }
+
+    // Butona tıklandığında başlat
+    if (playBtn) {
+        playBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            startVideo();
+        });
+    }
+
+    // Kapak katmanına tıklanırsa da başlat
+    if (videoCover) {
+        videoCover.addEventListener('click', function () {
+            startVideo();
+        });
+    }
+
+    /* ============================================================
        KONSOL
        ============================================================ */
     console.log('%c800 METRE', 'font-size: 32px; font-weight: 900; color: #d4af37; font-family: Playfair Display, serif;');
-    console.log('%cBranşın kapsamlı analizi — Video 3:20\'den başlıyor.', 'font-size: 13px; color: #b8b2a7;');
+    console.log('%cBranşın kapsamlı analizi — Video butona basılınca 3:20\'den başlar.', 'font-size: 13px; color: #b8b2a7;');
 
 })();
 </script>
 
 </body>
-</html>
+    </html>
